@@ -297,6 +297,7 @@ int CupI_parse_fragment(struct CupIIterator* iter, CupRange* result) {
 
 int Cup_parse(char* src, CupURL* result) {
     CUP_STD_MEMSET(result, 0, sizeof(*result));
+    result->port = -1;
 
     struct CupIIterator iter;
     CupIIterator_init(src, &iter);
