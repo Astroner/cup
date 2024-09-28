@@ -23,6 +23,7 @@ lib: src/cup.c src/cup.h src/internals.h
 	cat src/cup.h > Cup.h
 	echo "#if defined(CUP_IMPLEMENTATION)" >> Cup.h
 	tail -n +2 src/internals.h >> Cup.h
+	tail -n +2 src/helpers.c >> Cup.h
 	tail -n +2 src/cup.c >> Cup.h
 	echo "#endif // CUP_IMPLEMENTATION" >> Cup.h
 

@@ -31,7 +31,7 @@ char generalBuffer[40];
         MATCHER_CONDITION(\
             PASSES_IF(\
                 (!expected.username && result.username.length == 0)\
-                || strncmp(MATCHER_VALUE + result.username.start, expected.username, result.username.length) == 0\
+                || (expected.username && strncmp(MATCHER_VALUE + result.username.start, expected.username, result.username.length) == 0)\
             )\
         ) {\
             MATCHER_INFO("Got username '%s'\n", Cup_extractTo(MATCHER_VALUE, &result.username, generalBuffer, sizeof(generalBuffer)));\
@@ -40,7 +40,7 @@ char generalBuffer[40];
         MATCHER_CONDITION(\
             PASSES_IF(\
                 (!expected.password && result.password.length == 0)\
-                || strncmp(MATCHER_VALUE + result.password.start, expected.password, result.password.length) == 0\
+                || (expected.password && strncmp(MATCHER_VALUE + result.password.start, expected.password, result.password.length) == 0)\
             )\
         ) {\
             MATCHER_INFO("Got password '%s'\n", Cup_extractTo(MATCHER_VALUE, &result.password, generalBuffer, sizeof(generalBuffer)));\
@@ -49,7 +49,7 @@ char generalBuffer[40];
         MATCHER_CONDITION(\
             PASSES_IF(\
                 (!expected.host && result.host.length == 0)\
-                || strncmp(MATCHER_VALUE + result.host.start, expected.host, result.host.length) == 0\
+                || (expected.host && strncmp(MATCHER_VALUE + result.host.start, expected.host, result.host.length) == 0)\
             )\
         ) {\
             MATCHER_INFO("Got host '%s'\n", Cup_extractTo(MATCHER_VALUE, &result.host, generalBuffer, sizeof(generalBuffer)));\
@@ -62,7 +62,7 @@ char generalBuffer[40];
         MATCHER_CONDITION(\
             PASSES_IF(\
                 (!expected.path && result.path.length == 0)\
-                || strncmp(MATCHER_VALUE + result.path.start, expected.path, result.path.length) == 0\
+                || (expected.path && strncmp(MATCHER_VALUE + result.path.start, expected.path, result.path.length) == 0)\
             )\
         ) {\
             MATCHER_INFO("Got path '%s'\n", Cup_extractTo(MATCHER_VALUE, &result.path, generalBuffer, sizeof(generalBuffer)));\
@@ -71,7 +71,7 @@ char generalBuffer[40];
         MATCHER_CONDITION(\
             PASSES_IF(\
                 (!expected.query && result.query.length == 0)\
-                || strncmp(MATCHER_VALUE + result.query.start, expected.query, result.query.length) == 0\
+                || (expected.query && strncmp(MATCHER_VALUE + result.query.start, expected.query, result.query.length) == 0)\
             )\
         ) {\
             MATCHER_INFO("Got query '%s'\n", Cup_extractTo(MATCHER_VALUE, &result.query, generalBuffer, sizeof(generalBuffer)));\
@@ -80,7 +80,7 @@ char generalBuffer[40];
         MATCHER_CONDITION(\
             PASSES_IF(\
                 (!expected.fragment && result.fragment.length == 0)\
-                || strncmp(MATCHER_VALUE + result.fragment.start, expected.fragment, result.fragment.length) == 0\
+                || (expected.fragment && strncmp(MATCHER_VALUE + result.fragment.start, expected.fragment, result.fragment.length) == 0)\
             )\
         ) {\
             MATCHER_INFO("Got fragment '%s'\n", Cup_extractTo(MATCHER_VALUE, &result.fragment, generalBuffer, sizeof(generalBuffer)));\
@@ -91,10 +91,10 @@ char generalBuffer[40];
 DESCRIBE(general) {
     char generalBuffer[20];
     IT("works") {
-        EXPECT("https://memes.com/popular?topic=ricardo#latest") TO_BE_URL(
+        EXPECT("https://billy%20herington:aniki@memes.com/popular?topic=ricardo#latest") TO_BE_URL(
             "https",
-            NULL,
-            NULL,
+            "billy%20herington",
+            "aniki",
             "memes.com",
             0,
             "/popular",
@@ -112,5 +112,51 @@ DESCRIBE(general) {
             NULL,
             NULL,
         );
+
+        EXPECT("tel:+1-362-251-01-12") TO_BE_URL(
+            "tel",
+            NULL,
+            NULL,
+            NULL,
+            0,
+            "+1-362-251-01-12",
+            NULL,
+            NULL,
+        );
+
+
+        EXPECT("file:///Cup.h") TO_BE_URL(
+            "file",
+            NULL,
+            NULL,
+            NULL,
+            0,
+            "/Cup.h",
+            NULL,
+            NULL,
+        );
+
+        EXPECT("urn:uuid:11") TO_BE_URL(
+            "urn",
+            NULL,
+            NULL,
+            NULL,
+            0,
+            "uuid:11",
+            NULL,
+            NULL
+        )
+
+        EXPECT("urn://uuid:11") TO_BE_URL(
+            "urn",
+            NULL,
+            NULL,
+            "uuid",
+            11,
+            NULL,
+            NULL,
+            NULL
+        )
+        
     }
 }

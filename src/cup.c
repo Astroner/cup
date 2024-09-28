@@ -1,63 +1,5 @@
 #include "internals.h"
 
-
-#if !defined(CUP_STD_MEMSET)
-    #include <string.h>
-    #define CUP_STD_MEMSET memset
-#endif // CUP_STD_MEMSET
-
-#if !defined(CUP_STD_MEMCPY)
-    #include <string.h>
-    #define CUP_STD_MEMCPY memcpy
-#endif // CUP_STD_MEMCPY
-
-#if !defined(CUP_STD_MALLOC)
-    #include <stdlib.h>
-    #define CUP_STD_MALLOC malloc
-#endif // CUP_STD_MALLOC
-
-#define CUP_IS_ALPHABETIC(ch) (((ch) >= 'a' && (ch) <= 'z') || ((ch) >= 'A' && (ch) <= 'Z'))
-#define CUP_IS_NUMERIC(ch) ((ch) >= '0' && (ch) <= '9')
-#define CUP_IS_SPECIAL(ch) ((ch) == '-' || (ch) == '.' || (ch) == '_' || (ch) == '~')
-#define CUP_IS_UNRESERVED(ch) (CUP_IS_ALPHABETIC(ch) || CUP_IS_NUMERIC(ch) || CUP_IS_SPECIAL(ch))
-
-#define CUP_IS_HEX(ch) (CUP_IS_NUMERIC(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
-
-int CupI_isSubDelimiter(char ch) {
-    switch(ch) {
-        case '!':
-        case '$':
-        case '&':
-        case '\'':
-        case '(':
-        case ')':
-        case '*':
-        case '+':
-        case ',':
-        case ';':
-        case '=':
-            return 1;
-
-        default:
-            return 0;
-    }
-}
-
-void CupIIterator_init(char* src, struct CupIIterator* iter) {
-    iter->index = 0;
-    iter->src = src;
-}
-
-char CupIIterator_next(struct CupIIterator* iter) {
-    char current = iter->src[iter->index];
-
-    if(current != '\0') {
-        iter->index += 1;
-    }
-
-    return current;
-}
-
 int CupI_parse_scheme(struct CupIIterator* iter, CupRange* range) {    
     int length = 0;
 
@@ -370,6 +312,10 @@ int Cup_parse(char* src, CupURL* result) {
         if(CupIIterator_next(&iter) == '/') {
             if((status = CupI_parse_authority(&iter, result)) < 0) {
                 return -1;
+            }
+
+            if(status == 0) {
+                return 0;
             }
 
             if(status == 2) {

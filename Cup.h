@@ -27,20 +27,6 @@ char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
 #if !defined(CUP_INTERNALS_H)
 #define CUP_INTERNALS_H
 
-struct CupIIterator {
-    char* src;
-    int index;
-};
-
-void CupIIterator_init(char* src, struct CupIIterator* iter);
-char CupIIterator_next(struct CupIIterator* iter);
-int CupI_parse_scheme(struct CupIIterator* iter, CupRange* range);
-int CupI_parse_path(struct CupIIterator* iter, CupRange* result);
-int CupI_parse_authority(struct CupIIterator* iter, CupURL* result);
-
-#endif // CUP_INTERNALS_H
-
-
 #if !defined(CUP_STD_MEMSET)
     #include <string.h>
     #define CUP_STD_MEMSET memset
@@ -56,12 +42,28 @@ int CupI_parse_authority(struct CupIIterator* iter, CupURL* result);
     #define CUP_STD_MALLOC malloc
 #endif // CUP_STD_MALLOC
 
+
 #define CUP_IS_ALPHABETIC(ch) (((ch) >= 'a' && (ch) <= 'z') || ((ch) >= 'A' && (ch) <= 'Z'))
 #define CUP_IS_NUMERIC(ch) ((ch) >= '0' && (ch) <= '9')
 #define CUP_IS_SPECIAL(ch) ((ch) == '-' || (ch) == '.' || (ch) == '_' || (ch) == '~')
 #define CUP_IS_UNRESERVED(ch) (CUP_IS_ALPHABETIC(ch) || CUP_IS_NUMERIC(ch) || CUP_IS_SPECIAL(ch))
 
 #define CUP_IS_HEX(ch) (CUP_IS_NUMERIC(ch) || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F'))
+
+int CupI_isSubDelimiter(char ch);
+
+struct CupIIterator {
+    char* src;
+    int index;
+};
+
+void CupIIterator_init(char* src, struct CupIIterator* iter);
+char CupIIterator_next(struct CupIIterator* iter);
+int CupI_parse_scheme(struct CupIIterator* iter, CupRange* range);
+int CupI_parse_path(struct CupIIterator* iter, CupRange* result);
+int CupI_parse_authority(struct CupIIterator* iter, CupURL* result);
+
+#endif // CUP_INTERNALS_H
 
 int CupI_isSubDelimiter(char ch) {
     switch(ch) {
@@ -97,6 +99,7 @@ char CupIIterator_next(struct CupIIterator* iter) {
 
     return current;
 }
+
 
 int CupI_parse_scheme(struct CupIIterator* iter, CupRange* range) {    
     int length = 0;
@@ -410,6 +413,10 @@ int Cup_parse(char* src, CupURL* result) {
         if(CupIIterator_next(&iter) == '/') {
             if((status = CupI_parse_authority(&iter, result)) < 0) {
                 return -1;
+            }
+
+            if(status == 0) {
+                return 0;
             }
 
             if(status == 2) {
