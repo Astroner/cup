@@ -74,6 +74,7 @@ Cup provides 2 functions to extract ranges from the source string: **Cup_extract
 
 ### Cup_extract
 **Cup_extract()** takes source string and URL components **CupRange** and extracts information into newly allocated chunk of memory.
+This function returns **NULL** if the component has 0 length or it failed to allocate the memory
 ```c
 char* Cup_extract(char* src, CupRange* range);
 ```
@@ -84,7 +85,7 @@ char* Cup_extract(char* src, CupRange* range);
 ```c
 char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
 ```
- - **returns** - pointer to the provided **buffer**
+ - **returns** - pointer to the provided **buffer** or **NULL** if the component has 0 length
  - **src** - source string
  - **range** - URL component
  - **buffer** - destination buffer

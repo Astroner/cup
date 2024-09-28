@@ -378,6 +378,11 @@ char* Cup_extract(char* src, CupRange* range) {
 }
 
 char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length) {
+    if(range->length == 0) {
+        buffer[0] = '\0';
+        return NULL;
+    }
+
     if(length < range->length + 1) {
         buffer[0] = '\0';
         return NULL;
