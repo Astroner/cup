@@ -1,5 +1,5 @@
 # Hi There
-This is **Cup** - C URL parsing library
+This is **Cup** - a single [file](https://raw.githubusercontent.com/Astroner/cup/master/Cup.h) C URL parsing library
 
 # Table of content
  - [Quick example](#quick-example)
