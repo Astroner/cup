@@ -20,6 +20,7 @@ typedef struct CupURL {
 int Cup_parse(char* src, CupURL* result);
 char* Cup_extract(char* src, CupRange* range);
 char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
+const char* Cup_extractTmp(char* src, CupRange* range);
 
 #endif // URL_PARSE
 #if defined(CUP_IMPLEMENTATION)
@@ -42,6 +43,9 @@ char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
     #define CUP_STD_MALLOC malloc
 #endif // CUP_STD_MALLOC
 
+#if !defined(CUP_TMP_BUFFER_SIZE)
+    #define CUP_TMP_BUFFER_SIZE 100
+#endif // CUP_TMP_BUFFER_SIZE
 
 #define CUP_IS_ALPHABETIC(ch) (((ch) >= 'a' && (ch) <= 'z') || ((ch) >= 'A' && (ch) <= 'Z'))
 #define CUP_IS_NUMERIC(ch) ((ch) >= '0' && (ch) <= '9')
@@ -494,5 +498,17 @@ char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length) {
     buffer[range->length] = '\0';
 
     return buffer;
+}
+
+char extractionBuffer[CUP_TMP_BUFFER_SIZE];
+const char* Cup_extractTmp(char* src, CupRange* range) {
+    if(range->length + 1 > (int)sizeof(extractionBuffer)) {
+        return NULL;
+    }
+
+    CUP_STD_MEMCPY(extractionBuffer, src + range->start, range->length);
+    extractionBuffer[range->length] = '\0';
+
+    return extractionBuffer;
 }
 #endif // CUP_IMPLEMENTATION

@@ -18,6 +18,9 @@
     #define CUP_STD_MALLOC malloc
 #endif // CUP_STD_MALLOC
 
+#if !defined(CUP_TMP_BUFFER_SIZE)
+    #define CUP_TMP_BUFFER_SIZE 100
+#endif // CUP_TMP_BUFFER_SIZE
 
 #define CUP_IS_ALPHABETIC(ch) (((ch) >= 'a' && (ch) <= 'z') || ((ch) >= 'A' && (ch) <= 'Z'))
 #define CUP_IS_NUMERIC(ch) ((ch) >= '0' && (ch) <= '9')

@@ -20,5 +20,6 @@ typedef struct CupURL {
 int Cup_parse(char* src, CupURL* result);
 char* Cup_extract(char* src, CupRange* range);
 char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
+const char* Cup_extractTmp(char* src, CupRange* range);
 
 #endif // URL_PARSE

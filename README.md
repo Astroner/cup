@@ -8,6 +8,7 @@ This is **Cup** - a single [file](https://raw.githubusercontent.com/Astroner/cup
      - [Extracting values](#extracting-values)
          - [Cup_extract](#cup_extract)
          - [Cup_extractTo](#cup_extractto)
+         - [Cup_extractTmp](#cup_extracttmp)
  - [Dependencies](#dependencies)
 
 # Quick example
@@ -22,19 +23,18 @@ int main(void) {
 
     Cup_parse(href, &url);
 
-    printf("Scheme: %s\n", Cup_extract(href, &url.scheme));     // Scheme: scheme
-    printf("Username: %s\n", Cup_extract(href, &url.username)); // Username: username
-    printf("Password: %s\n", Cup_extract(href, &url.password)); // Password: password
-    printf("Host: %s\n", Cup_extract(href, &url.host));         // Host: example.host
-    printf("Port: %d\n", url.port);                             // Port: 3000
-    printf("Path: %s\n", Cup_extract(href, &url.path));         // Path: /example/path
-    printf("Query: %s\n", Cup_extract(href, &url.query));       // Query: with=query
-    printf("Fragment: %s\n", Cup_extract(href, &url.fragment)); // Fragment: and-fragment
+    printf("Scheme: %s\n", Cup_extractTmp(href, &url.scheme));      // Scheme: scheme
+    printf("Username: %s\n", Cup_extractTmp(href, &url.username));  // Username: username
+    printf("Password: %s\n", Cup_extractTmp(href, &url.password));  // Password: password
+    printf("Host: %s\n", Cup_extractTmp(href, &url.host));          // Host: example.host
+    printf("Port: %d\n", url.port);                                 // Port: 3000
+    printf("Path: %s\n", Cup_extractTmp(href, &url.path));          // Path: /example/path
+    printf("Query: %s\n", Cup_extractTmp(href, &url.query));        // Query: with=query
+    printf("Fragment: %s\n", Cup_extractTmp(href, &url.fragment));  // Fragment: and-fragment
 
     return 0;
 }
 ```
-> Note that **Cup_extract()** allocates memory so you have to call **free** after.
 
 # Usage
 Cup is STB-like single header file library, so to use it you just need to include [Cup.h](https://raw.githubusercontent.com/Astroner/cup/master/Cup.h) into you project and define **CUP_IMPLEMENTATION** once before **include** statement to add the implementation.
@@ -81,7 +81,7 @@ char* Cup_extract(char* src, CupRange* range);
 > **Cup_extract()** uses **malloc()** under the hood but this behavior can be changed by defining **CUP_STD_MALLOC** before implementation
 
 ### Cup_extractTo
-**Cup_extractTo()** copies url component into provided buffer:
+**Cup_extractTo()** copies url component into the provided buffer:
 ```c
 char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
 ```
@@ -92,6 +92,17 @@ char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length);
  - **length** - destination buffer size
 
 **Cup_extractTo()** adds nul-terminator at the end, so the buffer size should be +1 from the component length.
+
+### Cup_extractTmp
+**Cup_extractTmp()** copies url component into an internal buffer:
+```c
+const char* Cup_extractTmp(char* src, CupRange* range);
+```
+ - **returns** - pointer to the extracted component(nul-terminated) or **NULL** if the component cannot fit into the buffer
+ - **src** - source string
+ - **range** - URL component
+
+Buffer size is 100 by default and can be changed by defining **CUP_TMP_BUFFER_SIZE** macro before the implementation
 
 # Dependencies
 Cup uses several std functions like **malloc()** but this behavior can be changed by defining special macro before implementation to replace the default function.

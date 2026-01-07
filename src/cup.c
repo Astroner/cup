@@ -394,3 +394,15 @@ char* Cup_extractTo(char* src, CupRange* range, char* buffer, int length) {
 
     return buffer;
 }
+
+char extractionBuffer[CUP_TMP_BUFFER_SIZE];
+const char* Cup_extractTmp(char* src, CupRange* range) {
+    if(range->length + 1 > (int)sizeof(extractionBuffer)) {
+        return NULL;
+    }
+
+    CUP_STD_MEMCPY(extractionBuffer, src + range->start, range->length);
+    extractionBuffer[range->length] = '\0';
+
+    return extractionBuffer;
+}
